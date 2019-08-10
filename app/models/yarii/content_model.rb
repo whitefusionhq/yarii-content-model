@@ -1,14 +1,14 @@
 require 'safe_yaml'
 require 'rake'
 
-class Mariposta::ContentModel
+class Yarii::ContentModel
   include ActiveModel::Model
   extend ActiveModel::Callbacks
   define_model_callbacks :create, :update, :destroy
 
-  include Mariposta::Serializers::YAML
-  extend Mariposta::VariableDefinitions
-  extend Mariposta::FilePathDefinitions
+  include Yarii::Serializers::YAML
+  extend Yarii::VariableDefinitions
+  extend Yarii::FilePathDefinitions
 
   # override in ApplicationContentModel
   class_attribute :base_path, instance_accessor: false, default: ""
@@ -99,7 +99,7 @@ class Mariposta::ContentModel
       end
 
       # TODO: figure out a better way to hook in repo updates
-  #    Mariposta::Repository.current&.add(file_path_to_use)
+  #    Yarii::Repository.current&.add(file_path_to_use)
 
       true
     end
@@ -110,7 +110,7 @@ class Mariposta::ContentModel
       if persisted?
         File.delete(file_path)
       # TODO: figure out a better way to hook in repo updates
-  #      Mariposta::Repository.current&.remove(file_path)
+  #      Yarii::Repository.current&.remove(file_path)
         self.file_path = nil
 
         true

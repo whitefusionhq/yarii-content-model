@@ -1,6 +1,6 @@
 require 'active_model'
 
-module Mariposta
+module Yarii
   module Serializers
     # == Active Model YAML Serializer
     module YAML

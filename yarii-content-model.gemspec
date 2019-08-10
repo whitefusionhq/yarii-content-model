@@ -1,12 +1,12 @@
 $:.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
-require "mariposta-content-model/version"
+require "yarii-content-model/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "mariposta-content-model"
-  s.version     = MaripostaContentModel::VERSION
+  s.name        = "yarii-content-model"
+  s.version     = YariiContentModel::VERSION
   s.authors     = ["Jared White"]
   s.email       = ["jared@jaredwhite.com"]
   s.homepage    = "https://whitefusion.io"
