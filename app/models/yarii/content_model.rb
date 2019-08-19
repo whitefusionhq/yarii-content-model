@@ -1,10 +1,11 @@
 require 'safe_yaml'
+require 'fileutils'
 require 'rake'
 
 class Yarii::ContentModel
   include ActiveModel::Model
   extend ActiveModel::Callbacks
-  define_model_callbacks :create, :update, :destroy
+  define_model_callbacks :save, :destroy
 
   include Yarii::Serializers::YAML
   extend Yarii::VariableDefinitions
@@ -23,6 +24,7 @@ class Yarii::ContentModel
   # code snippet from Jekyll
   YAML_FRONT_MATTER_REGEXP = %r!\A(---\s*\n.*?\n?)^((---|\.\.\.)\s*$\n?)!m
   CHECK_BASE_64_REGEXP = /^([A-Za-z0-9+\/]{4})*([A-Za-z0-9+\/]{4}|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{2}==)$/
+  PAGINATION_SIZE = 12
 
   def self.find(file_path)
     raise "Missing base path for the #{self.name} content model" if self.base_path.blank?
@@ -32,14 +34,14 @@ class Yarii::ContentModel
       file_path = Base64::decode64 file_path
     end
 
-    file_path = path(file_path)
+    file_path = absolute_path(file_path)
 
     new(file_path: file_path).tap do |content_model|
       content_model.load_file_from_path
     end
   end
 
-  def self.path(path)
+  def self.absolute_path(path)
     sanitize_filepath File.join(self.base_path, self.folder_path, path)
   end
 
@@ -86,15 +88,19 @@ class Yarii::ContentModel
     end
   end
 
-  def save(force_file_path=nil)
-    callback_name = new_record? ? :create : :update
-    run_callbacks callback_name do
-      file_path_to_use = force_file_path || file_path
-      if file_path_to_use.blank?
-        raise "Must specify a file path"
+  def save
+    run_callbacks :save do
+      if file_path.blank?
+        self.file_path = generate_new_file_path
       end
 
-      File.open(file_path_to_use, 'w') do |f|
+      # Create folders if necessary
+      dir = File.dirname(file_path)
+      unless File.directory?(dir)
+        FileUtils.mkdir_p(dir)
+      end
+
+      File.open(file_path, 'w') do |f|
         f.write(generate_file_output)
       end
 
@@ -127,7 +133,7 @@ class Yarii::ContentModel
   end
 
   def persisted?
-    file_path.present?
+    file_path.present? && File.exist?(file_path)
   end
   def new_record?
     !persisted?
@@ -153,7 +159,27 @@ class Yarii::ContentModel
     end
   end
 
+  def generate_new_file_path
+    # NOTE: this can totally be subclassed by various content models…
+
+    if use_date = date && date.to_datetime
+      date_prefix = "#{use_date.strftime('%Y-%m-%d')}-"
+    else
+      date_prefix = "#{Date.current.strftime('%Y-%m-%d')}-"
+    end
+
+    slug = if title
+      title.gsub(/['|"]/,'').parameterize
+    else
+      "untitled_#{self.class.name.parameterize}"
+    end
+
+    self.class.absolute_path("#{date_prefix}#{slug}.md")
+  end
+
   def generate_file_output
+    # NOTE: this can totally be subclassed by various content models…
+
     as_yaml + "---\n\n" + content.to_s
   end
 
