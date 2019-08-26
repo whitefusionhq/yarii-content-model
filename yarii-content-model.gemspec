@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", ">= 5.0", "< 7.0"
   s.add_dependency 'safe_yaml', '~> 1.0'
+  s.add_dependency 'key_path', '~> 1.2'
   s.add_dependency 'git', '~> 1.3'
 
   s.add_development_dependency "rspec-rails", "3.8.2"
