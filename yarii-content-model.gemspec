@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://whitefusion.io"
   s.summary     = "Provides an ActiveRecord-like method of loading and saving static content files (from Jekyll, Hugo, etc.)"
   s.description = s.summary
-  s.license     = "Copyright 2019 Whitefusion. All Rights Reserved"
+  s.license     = "MIT"
 
   all_files       = `git ls-files -z`.split("\x0")
   s.files         = all_files.grep(%r{^(exe|lib)/|^.rubocop.yml$})
