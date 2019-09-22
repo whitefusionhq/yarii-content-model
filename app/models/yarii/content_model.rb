@@ -190,7 +190,7 @@ class Yarii::ContentModel
   def attributes
     ret = {}
     variable_names.each do |var_name|
-      ret[var_name.to_s] = nil
+      ret[var_name.to_s] = send(var_name.to_sym)
     end
     ret
   end
@@ -246,6 +246,12 @@ class Yarii::ContentModel
     if loaded_variables.present?
       update_variables(loaded_variables)
     end
+  end
+
+
+  def as_json(options={})
+    options[:except] = (options[:except] || []) + ["variable_names"]
+    super(options)
   end
 
 end
