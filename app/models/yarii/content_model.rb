@@ -104,9 +104,6 @@ class Yarii::ContentModel
         f.write(generate_file_output)
       end
 
-      # TODO: figure out a better way to hook in repo updates
-  #    Yarii::Repository.current&.add(file_path_to_use)
-
       true
     end
   end
@@ -115,8 +112,6 @@ class Yarii::ContentModel
     run_callbacks :destroy do
       if persisted?
         File.delete(file_path)
-      # TODO: figure out a better way to hook in repo updates
-  #      Yarii::Repository.current&.remove(file_path)
         self.file_path = nil
 
         true
