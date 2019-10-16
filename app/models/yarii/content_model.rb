@@ -121,10 +121,13 @@ class Yarii::ContentModel
 
   def id
     if persisted?
-      relative_base = File.join(self.class.base_path, self.class.folder_path)
-      relative_path = file_path.sub(/^#{relative_base}/, '')
       Base64.encode64(relative_path).strip
     end
+  end
+
+  def relative_path
+    relative_base = File.join(self.class.base_path, self.class.folder_path)
+    file_path.sub(/^#{relative_base}/, '')
   end
 
   def persisted?
