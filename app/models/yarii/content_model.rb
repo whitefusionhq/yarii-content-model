@@ -157,6 +157,12 @@ class Yarii::ContentModel
     end
   end
 
+  def will_be_published?
+    return false if respond_to?(:published) and published === false
+    return false if respond_to?(:draft) and draft
+    true
+  end
+
   def generate_new_file_path
     # NOTE: this can totally be subclassed by various content models…
 
