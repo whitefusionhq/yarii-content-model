@@ -54,18 +54,19 @@ class Yarii::ContentModel
     path
   end
 
-  def self.all(sorted: true, subfolder: nil)
+  def self.all(sorted: true, order_by: :posted_datetime, order_direction: :desc, subfolder: nil)
     raise "Missing base path for the #{self.name} content model" if self.base_path.blank?
 
     if self.folder_path.present?
-      # find all files in the folder and any direct subfolders
-      glob_pattern = File.join(self.base_path, self.folder_path, subfolder.to_s, "**/**")
+      # find all content files in the folder and any direct subfolders
+      glob_pattern = File.join(self.base_path, self.folder_path, subfolder.to_s, "**/*.{md,markdown,html}")
 
       files = Dir.glob(glob_pattern)
     else
-      # find any Markdown or HTML pages not in special underscore folders
+      # find any content files not in special underscore folders
       files = Rake::FileList.new(
         File.join(self.base_path, "**/*.md"),
+        File.join(self.base_path, "**/*.markdown"),
         File.join(self.base_path, "**/*.html")
       ) do |fl|
         basename = Pathname.new(self.base_path).basename.sub(/^_/, '')
@@ -82,7 +83,10 @@ class Yarii::ContentModel
     end.compact
 
     if sorted
-      models.sort_by! {|content_model| content_model.posted_datetime }.reverse
+      models.sort_by! do |content_model|
+        content_model.send(order_by)
+      end
+      order_direction == :desc ? models.reverse : models
     else
       models
     end
