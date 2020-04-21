@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Jared White"]
   s.email       = ["jared@jaredwhite.com"]
   s.homepage    = "https://whitefusion.io"
-  s.summary     = "Provides an ActiveRecord-like method of loading and saving static content files (from Jekyll, Hugo, etc.)"
+  s.summary     = "Provides an ActiveRecord-like method of loading and saving static content files (from Bridgetown, Jekyll, etc.)"
   s.description = s.summary
   s.license     = "MIT"
 
