@@ -14,8 +14,7 @@ Gem::Specification.new do |s|
   s.description = s.summary
   s.license     = "MIT"
 
-  all_files       = `git ls-files -z`.split("\x0")
-  s.files         = all_files.grep(%r{^(exe|lib)/|^.rubocop.yml$})
+  s.files = `git ls-files -z`.split("\x0").reject { |f| f.match(%r!^(test|script|spec|features)/!) }
 
   s.add_dependency "rails", ">= 5.0", "< 7.0"
   s.add_dependency 'safe_yaml', '~> 1.0'
