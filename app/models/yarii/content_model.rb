@@ -84,7 +84,9 @@ class Yarii::ContentModel
 
     if sorted
       models.sort_by! do |content_model|
-        content_model.send(order_by)
+        sort_value = content_model.send(order_by)
+        Rails.logger.warn ("Sorting #{self.class.name} by #{order_by}, return value is nil")
+        sort_value.to_s
       end
       order_direction == :desc ? models.reverse : models
     else
